@@ -1,63 +1,69 @@
 class Solution {
 
 private:
-    bool checkAdj(const string &a,const string &b){
-        int n = a.size();
-        int difIndexCount = 0;
-        for(int i = 0 ; i < n ; i++){
-            if(a[i]!=b[i]) difIndexCount++;
-            if(difIndexCount > 1) return false;
+    bool check(string& s, string& t) {
+        if (s.length() != t.length())
+            return false;
+
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s[i] != t[i])
+                count++;
         }
-        return true;
+
+        return (count == 1);
+    }
+
+    bool findstring(vector<string>& words, string& word) {
+
+        for (auto s : words) {
+            if (s == word)
+                return true;
+        }
+
+        return false;
     }
 
 public:
-    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+    int ladderLength(string beginWord, string endWord,
+                     vector<string>& wordList) {
 
-        if(beginWord==endWord) return 0;
-        unordered_map<string,vector<string>> adj;
+        if (!findstring(wordList, endWord))
+            return 0;
 
-        int n = wordList.size();
-        for(int i = 0 ; i < n ; i++){
-            string curWord = wordList[i];
-            if(checkAdj(beginWord,curWord)){
-                adj[curWord].push_back(beginWord);
-                adj[beginWord].push_back(curWord);
-            }
-            for(int j = i + 1 ; j < n ; j++){
-                string nextWord = wordList[j];
-                if(checkAdj(curWord,nextWord)){
-                    adj[curWord].push_back(nextWord);
-                    adj[nextWord].push_back(curWord);
-                }
-            }
-        }
+        unordered_set<string> st(wordList.begin(), wordList.end());
 
-        unordered_set<string> visited;
-        queue<string> bfsq;
-        bfsq.push(beginWord);
-        visited.insert(beginWord);
+        queue<pair<string, int>> q;
 
-        int transformations = 1;
-        while(!bfsq.empty()){
+        q.push({beginWord, 1});
 
-            int m = bfsq.size();
+        while (!q.empty()) {
 
-            for(int i = 0 ; i < m ; i++){
-                string curWord = bfsq.front();
-                bfsq.pop();
+            int n = q.size();
 
-                if(curWord == endWord) return transformations;
+            for (int i = 0; i < n; i++) {
 
-                visited.insert(curWord);
-                for(auto &newWord : adj[curWord]){
-                    if(visited.find(newWord)==visited.end()){
-                        bfsq.push(newWord);
+                auto [word,dist] = q.front();
+                q.pop();
+
+                if (word == endWord)
+                    return dist;
+
+                for (int i = 0; i < word.size(); i++) {
+                    char original = word[i];
+
+                    for (char ch = 'a'; ch <= 'z'; ch++) {
+
+                        word[i] = ch;
+
+                        if(st.find(word)!=st.end()){
+                            st.erase(word);
+                            q.push({word,dist+1});
+                        }
                     }
+                    word[i] = original;
                 }
             }
-
-            transformations++;
         }
 
         return 0;
