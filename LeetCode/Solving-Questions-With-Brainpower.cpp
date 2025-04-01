@@ -8,7 +8,6 @@ private:
         if(dp[index]!=-1){
             return dp[index];
         }
-            
 
         int curPoint = questions[index][0];
         int brainNeeded = questions[index][1];
@@ -23,6 +22,13 @@ public:
     long long mostPoints(vector<vector<int>>& questions) {
         int n = questions.size();
         vector<long long> dp(n,-1);
-        return f(0,questions,dp);
+        dp[n-1] = questions[n-1][0];
+        for(int i = n - 2 ; i >= 0 ;i--){
+            dp[i] = questions[i][0];
+            int skip = questions[i][1];
+            if (i + skip < n-1) dp[i] += dp[i + skip + 1];
+            dp[i] = max(dp[i], dp[i+1]);
+        }
+        return dp[0];
     }
 };
