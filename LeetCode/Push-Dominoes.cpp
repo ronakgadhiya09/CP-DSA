@@ -1,47 +1,29 @@
 class Solution {
 public:
     string pushDominoes(string dominoes) {
-        unordered_map<char, int> mp;
-        mp['L'] = -1;
-        mp['R'] = 1;
-
         int n = dominoes.size();
-        vector<int> time(n, -1);
-        vector<int> force(n, 0); 
+        vector<int> forces(n, 0);
 
-        queue<pair<int, int>> q; 
-
+        int force = 0;
         for (int i = 0; i < n; i++) {
-            if (dominoes[i] == 'L' || dominoes[i] == 'R') {
-                q.push({i, mp[dominoes[i]]});
-                time[i] = 0;
-                force[i] = mp[dominoes[i]];
-            }
+            if (dominoes[i] == 'R') force = n;
+            else if (dominoes[i] == 'L') force = 0;
+            else if (force > 0) force--;
+            forces[i] += force;
         }
 
-        while (!q.empty()) {
-            auto [i, dir] = q.front();
-            q.pop();
-
-            int ni = i + dir;
-            if (ni < 0 || ni >= n || dominoes[ni] != '.') continue;
-
-            if (time[ni] == -1) {
-                time[ni] = time[i] + 1;
-                force[ni] = dir;
-                q.push({ni, dir});
-            }
-            else if (time[ni] == time[i] + 1 && force[ni] != dir) {
-                force[ni] = 0;
-            }
+        force = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            if (dominoes[i] == 'L') force = n;
+            else if (dominoes[i] == 'R') force = 0;
+            else if (force > 0) force--;
+            forces[i] -= force;
         }
 
         for (int i = 0; i < n; i++) {
-            if (dominoes[i] == '.') {
-                if (force[i] == -1) dominoes[i] = 'L';
-                else if (force[i] == 1) dominoes[i] = 'R';
-                else dominoes[i] = '.';
-            }
+            if (forces[i] > 0) dominoes[i] = 'R';
+            else if (forces[i] < 0) dominoes[i] = 'L';
+            else dominoes[i] = '.';
         }
 
         return dominoes;
