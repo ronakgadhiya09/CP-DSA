@@ -1,5 +1,6 @@
 typedef long long ll;
-typedef pair<ll, pair<int, int>> State; 
+#include <tuple>
+using State = std::tuple<ll,ll,int,int>;  
 
 class Solution {
     vector<pair<int,int>> dir = {{-1,0},{1,0},{0,-1},{0,1}};
@@ -8,27 +9,31 @@ class Solution {
         return x>=0 && y>=0 && x<n && y<m;
     }
 
-    ll dijkstra(const vector<vector<int>>& moveTime, vector<vector<ll>>& dist) {
+    ll h(int x, int y, int n, int m) {
+        return (ll)( (n-1 - x) + (m-1 - y) );
+    }
+
+    ll astar(const vector<vector<int>>& moveTime, vector<vector<ll>>& dist) {
         int n = moveTime.size(), m = moveTime[0].size();
         priority_queue<State, vector<State>, greater<State>> pq;
-        pq.push({0, {0,0}});
-        
-        while (!pq.empty()) {
-            auto [t, p] = pq.top(); pq.pop();
-            auto [x,y] = p;
-            if (t > dist[x][y]) continue;
-            if (x==n-1 && y==m-1) return t;
+        dist[0][0] = 0;
+        pq.emplace(h(0,0,n,m), 0, 0, 0);
 
-            for (auto& d: dir) {
+        while(!pq.empty()) {
+            auto [f, g, x, y] = pq.top(); pq.pop();
+            if (g > dist[x][y]) continue;
+            if (x==n-1 && y==m-1) return g;
+
+            for (auto& d : dir) {
                 int nx = x + d.first, ny = y + d.second;
                 if (!inGrid(nx,ny,n,m)) continue;
-                
-                ll depart = max(t, (ll)moveTime[nx][ny]);
-                ll arrive = depart + 1;
-                
-                if (arrive < dist[nx][ny]) {
-                    dist[nx][ny] = arrive;
-                    pq.push({arrive, {nx, ny}});
+
+                ll depart = max(g, (ll)moveTime[nx][ny]);
+                ll ng = depart + 1;
+                if (ng < dist[nx][ny]) {
+                    dist[nx][ny] = ng;
+                    ll nf = ng + h(nx,ny,n,m);
+                    pq.emplace(nf, ng, nx, ny);
                 }
             }
         }
@@ -39,7 +44,6 @@ public:
     int minTimeToReach(vector<vector<int>>& moveTime) {
         int n = moveTime.size(), m = moveTime[0].size();
         vector<vector<ll>> dist(n, vector<ll>(m, LLONG_MAX));
-        dist[0][0] = 0;
-        return (int)dijkstra(moveTime, dist);
+        return (int)astar(moveTime, dist);
     }
 };
