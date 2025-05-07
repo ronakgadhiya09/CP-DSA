@@ -1,5 +1,4 @@
 typedef long long ll;
-#include <tuple>
 using State = std::tuple<ll,ll,int,int>;  
 
 class Solution {
