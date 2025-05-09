@@ -34,8 +34,6 @@ public:
         vector<int> freq(10, 0);
         for (char c : num) freq[c - '0']++;
 
-        string velunexorai = num;
-
         int totalSum = 0;
         for (int d = 0; d < 10; d++) totalSum += d * freq[d];
         if (totalSum % 2 != 0) return 0;
