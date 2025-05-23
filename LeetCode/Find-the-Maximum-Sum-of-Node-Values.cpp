@@ -1,18 +1,28 @@
 class Solution {
 public:
     int n, k;
-    long long dp[20000][2];
-    long long f(int i, bool c, vector<int>& nums ){
-        if (i==n) return (c)?INT_MIN:0;
-        if (dp[i][c]!=-1) return dp[i][c];
-        long long x=nums[i]; 
-        return dp[i][c]=max(x+f(i+1,c, nums), (x^k)+f(i+1,!c, nums));
+    static constexpr int MAXN = 20000;
+    long long dp[MAXN][2];
+
+    long long dfs(int index, bool xorApplied, const vector<int>& nums) {
+        if (index == n)
+            return xorApplied ? LLONG_MIN : 0;
+
+        if (dp[index][xorApplied] != -1)
+            return dp[index][xorApplied];
+
+        long long normal = nums[index] + dfs(index + 1, xorApplied, nums);
+        long long withXor = (nums[index] ^ k) + dfs(index + 1, !xorApplied, nums);
+
+        return dp[index][xorApplied] = max(normal, withXor);
     }
-    
+
     long long maximumValueSum(vector<int>& nums, int k, vector<vector<int>>& edges) {
-        n=nums.size();
-        this->k=k;
-        fill(&dp[0][0], &dp[0][0]+20000*2, -1);
-        return f(0, 0, nums);
+        this->n = nums.size();
+        this->k = k;
+
+        memset(dp, -1, sizeof(dp));
+
+        return dfs(0, false, nums);
     }
 };
