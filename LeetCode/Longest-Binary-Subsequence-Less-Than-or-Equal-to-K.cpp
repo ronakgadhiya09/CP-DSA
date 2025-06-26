@@ -10,7 +10,8 @@ public:
             char ch = s[n - 1 - i];
             if (ch == '0') {
                 count++;
-            }else {
+            }
+            else {
                 if (i < 31 && value + (1 << i) <= k) {
                     value += 1 << i;
                     count++;
