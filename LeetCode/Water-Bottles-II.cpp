@@ -5,11 +5,10 @@ public:
         int exchangeFactor = numExchange;
         int emptyBottles = numBottles;
 
-        int round = 1;
         while(emptyBottles >= exchangeFactor){
             emptyBottles -= exchangeFactor;
             exchangeFactor++;
-            bottlesDrank ++;
+            bottlesDrank++;
             emptyBottles++;
         }
         
