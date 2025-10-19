@@ -7,15 +7,13 @@ public:
 
         if (greater) {
             for (int c = 0; c < 26; c++) {
-                if (freq[c] > 0) {
-                    freq[c]--; 
+                while(freq[c]>0){
                     ans.push_back(c + 'a');
-                    if (dfs(i + 1, ans, target, freq, true)) return true;
-                    ans.pop_back();
-                    freq[c]++;
+                    freq[c]--;
+
                 }
             }
-            return false;
+            return true;
         }
 
         int t = target[i] - 'a';
