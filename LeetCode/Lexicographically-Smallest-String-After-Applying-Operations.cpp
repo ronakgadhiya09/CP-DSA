@@ -1,28 +1,35 @@
 class Solution {
-private:
-    void findNum(string &s,int a,int b,set<string> &seen){
-        int n = s.size();
-        string t = s;
-        for(int i = 1; i <n; i+=2) t[i] = ((t[i] - '0' + a) % 10 ) + '0';
-        if(!seen.count(t)){
-            seen.insert(t);
-            findNum(t,a,b,seen);
-        }
-
-        t = s.substr(n-b,b) + s.substr(0,n-b);
-        if(!seen.count(t)){
-            seen.insert(t);
-            findNum(t,a,b,seen);
-        }
-
-        return;
-    }
-
 public:
     string findLexSmallestString(string s, int a, int b) {
+        queue<string> q;
         set<string> seen;
+        string ans = s;
+        
+        q.push(s);
         seen.insert(s);
-        findNum(s,a,b,seen);
-        return *seen.begin();
+
+        while (!q.empty()) {
+            string cur = q.front();
+            q.pop();
+
+            ans = min(ans, cur);
+
+            string addStr = cur;
+            for (int i = 1; i < addStr.size(); i += 2) {
+                addStr[i] = ((addStr[i] - '0' + a) % 10) + '0';
+            }
+            if (!seen.count(addStr)) {
+                seen.insert(addStr);
+                q.push(addStr);
+            }
+
+            string rotStr = cur.substr(cur.size() - b) + cur.substr(0, cur.size() - b);
+            if (!seen.count(rotStr)) {
+                seen.insert(rotStr);
+                q.push(rotStr);
+            }
+        }
+
+        return ans;
     }
 };
