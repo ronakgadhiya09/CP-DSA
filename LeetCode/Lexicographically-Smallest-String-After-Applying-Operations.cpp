@@ -21,6 +21,7 @@ private:
 public:
     string findLexSmallestString(string s, int a, int b) {
         set<string> seen;
+        seen.insert(s);
         findNum(s,a,b,seen);
         return *seen.begin();
     }
